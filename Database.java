@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class Database {
 
-    private static final String sqliteUrl = "jdbc:sqlite:./database.db";
+    private static final String sqliteUrl = "jdbc:sqlite:database.db";
 
     private static boolean error = false;
 
@@ -14,7 +14,7 @@ public class Database {
         try {
             connection = DriverManager.getConnection(sqliteUrl);
             executeUpdate("PRAGMA foreign_keys=ON");
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(true);
             System.out.println("Connection to SQLite database established.");
 
         } catch (SQLException e) {
@@ -22,6 +22,29 @@ public class Database {
         }
     }
 
+    public static boolean execute(String query) throws SQLException {
+        if (error) throw new SQLException();
+
+        query = query.replace("'null'", "null");
+        query = query.replace("\"null\"", "null");
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(query);
+            int rv= statement.executeUpdate();
+            if(rv==1){
+                System.out.println("Inserted successfully");
+            }else{
+                System.out.println(rv);
+            }
+            /*statement.close();
+            connection.close();*/
+            connection=null;
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+            error = true;
+            throw e;
+        }
+    }
 
     public static void closeConnection() {
         commit();
@@ -46,7 +69,10 @@ public class Database {
         query = query.replace("'null'", "null");
         query = query.replace("\"null\"", "null");
         try {
-            Statement statement = getConnection().createStatement();
+            Connection conn = getConnection();
+
+            Statement statement = conn.createStatement();
+
             return statement.executeQuery(query);
 
         } catch (SQLException e) {
@@ -68,7 +94,7 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace(System.err);
             error = true;
-            throw e;
+            //throw e;
         }
     }
 

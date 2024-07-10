@@ -21,7 +21,8 @@ public class CardRepository {
                         playerDamage INT NOT NULL,
                         upgradeLevel INT NOT NULL,
                         upgradeCost INT NOT NULL,
-                        price INT NOT NULL
+                        price INT NOT NULL,
+                        imageName varchar(50)
                     );
                 """, tableName);
 
@@ -32,7 +33,7 @@ public class CardRepository {
         }
     }
 
-    public static List<Card> mapResult(ResultSet result) {
+    private static List<Card> mapResult(ResultSet result) {
         List<Card> cards = new ArrayList<>();
         try {
             while (result.next()) {
@@ -45,6 +46,7 @@ public class CardRepository {
                 card.upgradeLevel = result.getInt("upgradeLevel");
                 card.upgradeCost = result.getInt("upgradeCost");
                 card.price = result.getInt("price");
+                card.imagePath = result.getString("imageName");
                 cards.add(card);
             }
 
@@ -87,25 +89,34 @@ public class CardRepository {
 
     public static void insert(Card card) {
         String query = String.format("""
-                    INSERT INTO %s (name, defenceAttack, duration, playerDamage, upgradeLevel, upgradeCost, price)
-                    VALUES ("%s", %d, %d, %d, %d, %d, %d)
+                    INSERT INTO %s (name, defenceAttack, duration, playerDamage, upgradeLevel, upgradeCost, price,imageName)
+                    VALUES ("%s", %d, %d, %d, %d, %d, %d,"%s")
                     RETURNING *;
-                """, tableName, card.name, card.defenceAttack, card.duration, card.playerDamage, card.upgradeLevel, card.upgradeCost, card.price);
+                """, tableName, card.name, card.defenceAttack, card.duration, card.playerDamage, card.upgradeLevel, card.upgradeCost, card.price,card.imagePath);
 
+        System.out.println(query);
         try {
             ResultSet result = Database.executeQuery(query);
             card.id = mapResult(result).get(0).id;
         } catch (Exception ignored) {
+            System.out.println(ignored.getMessage());
         }
     }
 
     public static void update(Card card) {
         String query = String.format("""
                     UPDATE %s
+                    SET name = '%s', defenceAttack = %d,imageName = '%s', duration = %d, playerDamage = %d, upgradeLevel = %d, upgradeCost = %d, price = %d
+                    WHERE id = %d
+                """, tableName, card.name, card.defenceAttack,card.imagePath, card.duration, card.playerDamage, card.upgradeLevel, card.upgradeCost, card.price, card.id);
+if(card.imagePath==null ){
+     query = String.format("""
+                    UPDATE %s
                     SET name = '%s', defenceAttack = %d, duration = %d, playerDamage = %d, upgradeLevel = %d, upgradeCost = %d, price = %d
                     WHERE id = %d
                 """, tableName, card.name, card.defenceAttack, card.duration, card.playerDamage, card.upgradeLevel, card.upgradeCost, card.price, card.id);
 
+}
         try {
             Database.executeUpdate(query);
         } catch (Exception ignored) {
@@ -125,4 +136,22 @@ public class CardRepository {
         }
     }
 
+    public static boolean buyCard(int playerId, int cardId) {
+        String query= """
+
+INSERT INTO PlayersCards(playerId,cardId) 
+values (%d,%d);
+""";
+        try {
+            query=String.format(query,playerId,cardId);
+            System.out.println(query);
+
+            Database.executeUpdate(query);
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+    }
 }

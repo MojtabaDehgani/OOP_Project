@@ -1,14 +1,14 @@
 package general;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Random;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public class General {
     static Random random = new Random();
     static String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
     public static String generateRandomString(int length) {
         StringBuilder result = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
@@ -33,5 +33,7 @@ public class General {
         StringSelection selection = new StringSelection(text);
         clipboard.setContents(selection, null);
     }
+
+
 
 }

@@ -27,7 +27,7 @@ public class PlayerService {
     }
 
     public static Player getByUserId(int userId) {
-        Player player = PlayerRepository.getByUserId(userId);
+        Player player = PlayerRepository.getByUserId(userId,false);
         if (player != null) return player;
 
         player = new Player(userId, 1, 100, 0, 100);
@@ -43,6 +43,12 @@ public class PlayerService {
         for (int i : numbers) PlayerRepository.addCard(player, cards.get(i));
 
         return player;
+    } public static Player getPlayerWithotCardsByUserId(int userId) {
+        Player player = PlayerRepository.getByUserId(userId,false);
+        if (player != null) return player;
+else {
+    return null;
+        }
     }
 
     public static List<Player> getAll() {

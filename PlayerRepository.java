@@ -1,8 +1,10 @@
 package game.player;
 
+import GUI.util.WindowsUtils;
 import database.Database;
 import game.card.Card;
 import game.card.CardRepository;
+import game.exceptions.MaximumCardLevelException;
 import user.UserRepository;
 
 import java.sql.ResultSet;
@@ -32,6 +34,8 @@ public class PlayerRepository {
                     CREATE TABLE IF NOT EXISTS %s (
                         playerId INT NOT NULL,
                         cardId INT NOT NULL,
+                        level INTEGER default 1 not null,
+                        
                         
                         UNIQUE (playerId, cardId),
                         
@@ -40,12 +44,15 @@ public class PlayerRepository {
                     );
                 """, tableName, relationTableName);
 
+
         try {
             Database.executeUpdate(query);
             Database.commit();
         } catch (Exception ignored) {
         }
     }
+
+
 
     public static List<Player> mapResult(ResultSet result) {
         List<Player> players = new ArrayList<>();
@@ -93,19 +100,28 @@ public class PlayerRepository {
         }
     }
 
-    public static Player getByUserId(int userId) {
+    public static Player getByUserId(int id,boolean playerId) {
         String query = String.format("""
                     SELECT * FROM %s
                     WHERE userId = %d
-                """, tableName, userId);
+                """, tableName, id);
+if(playerId) {
+    query = String.format("""
+                SELECT * FROM %s
+                WHERE id = %d
+            """, tableName, id);
+}
 
-        try {
-            ResultSet result = Database.executeQuery(query);
-            return mapResult(result).get(0);
-        } catch (Exception ignored) {
-            return null;
-        }
+    try {
+        ResultSet result = Database.executeQuery(query);
+
+        return mapResult(result).get(0);
+    } catch (Exception ignored) {
+        return null;
     }
+}
+
+
 
     public static List<Player> getAll() {
         String query = String.format("SELECT * FROM %s", tableName);
@@ -127,8 +143,10 @@ public class PlayerRepository {
                 """, tableName, player.userId, player.level, player.maxHP, player.XP, player.coins);
 
         try {
-            ResultSet result = Database.executeQuery(query);
+            /*ResultSet result =*/ Database.executeUpdate(query);
+/*
             map(mapResult(result).get(0), player);
+*/
         } catch (Exception ignored) {
         }
     }
@@ -206,6 +224,62 @@ public class PlayerRepository {
             e.printStackTrace(System.err);
             return new ArrayList<>();
         }
+    }
+
+    public static int getCardLevel(int playerId,int cardId){
+        try {
+      ResultSet resultSet=      Database.executeQuery(String.format("select * from PlayersCards where playerId=%d and cardId=%d",playerId,cardId));
+
+      if (resultSet.next()){
+         return resultSet.getInt("level");
+      }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+       return -1;
+    }
+
+    public static boolean increaseCardLevel(int playerId, int cardId) {
+
+       int level= getCardLevel(playerId,cardId);
+        Card c=getCards(playerId).stream().filter(e->e.id==cardId).findAny().orElse(null);
+        System.out.println(level);
+        System.out.println(c.upgradeLevel);
+    if(level>=c.upgradeLevel){
+throw new MaximumCardLevelException("Maximum card level");
+    }
+
+     if(c!=null) {
+         Player byUserId = getByUserId(playerId,true);
+         if(byUserId==null){
+
+             return false;
+         }
+
+
+         if (byUserId.XP >= c.upgradeCost*level) {
+
+             String query = """
+
+                     update PlayersCards set level=%d where playerId=%d and cardId=%d;
+                     """;
+             try {
+
+                 query = String.format(query,level+1, playerId, cardId);
+                 System.out.println(query);
+
+                 Database.executeUpdate(query);
+                 return true;
+             } catch (SQLException e) {
+                 System.out.println(e.getMessage());
+             }
+
+         }else{
+             WindowsUtils.createAlertDialog("Upgrade","","Not enough level");
+         }
+     }
+         return false;
+
     }
 
 }

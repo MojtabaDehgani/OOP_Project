@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserRepository {
 
+  private static final  Logger logger = Logger.getLogger(UserRepository.class.getName());
     public static final String tableName = "Users";
 
     public static void createTable() {
@@ -100,18 +103,25 @@ public class UserRepository {
             return null;
         }
     }
-
     public static void insert(User user) {
-        String query = String.format("""
+        user.recoveryQuestion= user.recoveryQuestion.replace("'","''");
+       String query = String.format("""
                     INSERT INTO %s (username, password, email, nickname, recoveryQuestion, answer)
                     VALUES ('%s', '%s', '%s', '%s', '%s', '%s')
-                    RETURNING *;
                 """, tableName, user.username, user.password, user.email, user.nickname, user.recoveryQuestion, user.answer);
 
+        System.out.println(query);
+
         try {
-            ResultSet result = Database.executeQuery(query);
-            map(mapResult(result).get(0), user);
+          //  ResultSet resultSet = Database.executeQuery(query);
+            Database.execute(query);
+            int id = Database.executeQuery("SELECT last_insert_rowid()").getInt(1);
+            user.id = id;
+            //map(mapResult(resultSet).get(0), user);
+            logger.info(String.format("User added successfully: %s",user.toString()));
         } catch (Exception ignored) {
+            logger.log(Level.SEVERE,ignored.getMessage());
+            ignored.printStackTrace();
         }
     }
 

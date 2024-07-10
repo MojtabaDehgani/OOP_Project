@@ -29,12 +29,10 @@ public class History {
 
     @Override
     public String toString() {
-        return "id: " + id +
-                ", date: " + getDateTime() +
-                ", playerId: " + playerId +
-                ", opponentId: " + opponentId +
-                ", result: " + result +
-                ", score: " + score
+        return "Date: " + getDateTime() +
+                " | opponentId: " + opponentId +
+                " | result: " + result +
+                " | score: " + score
                 ;
     }
 }

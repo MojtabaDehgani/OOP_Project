@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="110.0" spacing="5.0" style="-fx-background-color: #ffffff; -fx-border-radius: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.controller.InGameCardController">
+   <children>
+      <ImageView fx:id="card_image" fitHeight="100.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <image>
+
+         </image>
+      </ImageView>
+      <HBox prefWidth="200.0" spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name:">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Text>
+            <Label fx:id="card_name" text="Label" />
+         </children>
+      </HBox>
+      <HBox layoutX="20.0" layoutY="220.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="D/A">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Text>
+            <Label fx:id="card_defense_attack" text="Label" />
+         </children>
+      </HBox>
+      <HBox layoutX="20.0" layoutY="236.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dur..:">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Text>
+            <Label fx:id="card_duration" text="Label" />
+         </children>
+      </HBox>
+      <HBox layoutX="20.0" layoutY="252.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Damage">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Text>
+            <Label fx:id="card_player_damage" text="Label" />
+         </children>
+      </HBox>
+      <HBox layoutX="20.0" layoutY="268.0" prefWidth="200.0" spacing="10.0" />
+      <HBox layoutX="20.0" layoutY="284.0" prefWidth="200.0" spacing="10.0" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

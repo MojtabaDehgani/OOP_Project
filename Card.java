@@ -1,5 +1,7 @@
 package game.card;
 
+import java.util.Objects;
+
 public class Card {
     public Integer id;
     public String name;
@@ -10,6 +12,9 @@ public class Card {
     public int upgradeLevel;
     public int upgradeCost;
     public int price;
+
+    //optional image
+    public String imagePath;
 
     public Card() {
     }
@@ -47,4 +52,16 @@ public class Card {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return isSpecial == card.isSpecial && defenceAttack == card.defenceAttack && duration == card.duration && playerDamage == card.playerDamage && upgradeLevel == card.upgradeLevel && upgradeCost == card.upgradeCost && price == card.price && Objects.equals(id, card.id) && Objects.equals(name, card.name) && Objects.equals(imagePath, card.imagePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, isSpecial, defenceAttack, duration, playerDamage, upgradeLevel, upgradeCost, price, imagePath);
+    }
 }

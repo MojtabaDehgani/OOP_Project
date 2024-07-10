@@ -1,11 +1,22 @@
 package game.card;
 
+import database.Database;
 import game.player.Player;
 import game.player.PlayerService;
 
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 public class CardService {
+    public static boolean buyCard(int playerId,int cardId){
+ /*       Card card = get(cardId);
+       Card c= getUserCards(playerId).stream().filter(e->e.equals(card)).findAny().orElse(null);
+     if(c!=null){
+         return false;
+     }*/
+   return CardRepository.buyCard(playerId,cardId);
+    }
 
     public static boolean isValid(Card card) {
         if (card.playerDamage % card.duration != 0) {
